@@ -152,12 +152,14 @@ function M.sync()
     end
 
     -- Get a value from a namespace, either from spec or lock
+    local changed = false
     local function process_diff(diff, op)
         for ns, pkgset in pairs(diff) do
             local is_cmd = (spec[ns] or {}).cmd or (lock[ns] or {}).cmd
             local op_str = (spec[ns] or {})[op] or (lock[ns] or {})[op]
 
             if not empty(pkgset) then
+                changed = true
                 if is_cmd then
                     -- command
                     run(op_str)
@@ -176,8 +178,12 @@ function M.sync()
     -- Packages that were removed
     process_diff(M.diff(lock_set, spec_set), 'remove')
 
-    print("Saving lock...")
-    M.savelock(spec)
+    if changed then
+        print("Saving lock...")
+        M.savelock(spec)
+    else
+        print("Nothing to do...")
+    end
 end
 
 -- Overrides lock with current spec
