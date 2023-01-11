@@ -151,16 +151,20 @@ function M.sync()
         print("lock \\ spec = " .. M.serialize(M.diff(lock_set, spec_set)))
     end
 
-    local function process_diff(diff, cmd)
+    -- Get a value from a namespace, either from spec or lock
+    local function process_diff(diff, op)
         for ns, pkgset in pairs(diff) do
+            local is_cmd = (spec[ns] or {}).cmd or (lock[ns] or {}).cmd
+            local op_str = (spec[ns] or {})[op] or (lock[ns] or {})[op]
+
             if not empty(pkgset) then
-                if spec[ns].cmd then
+                if is_cmd then
                     -- command
-                    run(spec[ns][cmd])
+                    run(op_str)
                 else
                     -- list of packages
                     local pkgs = table.concat(set_to_array(pkgset), ' ')
-                    run(spec[ns][cmd] .. ' ' .. pkgs)
+                    run(op_str .. ' ' .. pkgs)
                 end
             end
         end
