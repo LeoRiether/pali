@@ -191,4 +191,16 @@ function M.override()
     M.savelock(M.loadspec())
 end
 
+-- Updates namespaces that have an `update` key
+function M.update()
+    print("Pali is updating...")
+    local spec = M.loadspec()
+    for ns, pkgset in pairs(spec) do
+        if pkgset.update ~= nil then
+            print("> Updating \27[92m" .. ns .. "\27[0m")
+            run(pkgset.update)
+        end
+    end
+end
+
 return M
