@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+cd "$(dirname "$0")/pali_lua" # cd to {the script directory}/pali_lua
+
+if [[ "$1" = "override" ]] || [[ "$1" = "o" ]]; then
+    lua -e "require'pali'.override()"
+elif [[ "$1" = "edit" ]] || [[ "$1" = "e" ]]; then
+    $EDITOR ~/.config/pali.lua
+    lua -e "require'pali'.sync()"
+elif [[ "$1" = "update" ]] || [[ "$1" = "u" ]]; then
+    lua -e "require'pali'.update()"
+else
+    lua -e "require'pali'.sync()"
+fi
